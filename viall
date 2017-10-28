@@ -1,0 +1,17 @@
+#!/bin/bash
+. ./configure
+# versucht alle Dateien eines Projekts zu editieren
+ZD=viaufruf # speichere die Zahl der Aufrufe in Datei dieses Namens
+FREQUENZ=5 # rufe gtags jedes 5. Mal auf
+
+exportvars
+einricht ctags "$CTAGS"
+ctags -V *.cpp *.h
+test -f $ZD || echo 1>$ZD; awk "BEGIN {print `cat $ZD`+1}">$ZD
+expr $(cat $ZD) % $FREQUENZ >/dev/null 2>&1||{ 
+  printf "Calling/rufe auf: gtags - please wait / bitte warten ...\n";
+  einricht gtags global; 
+	ls *.cpp *.h > gtags.files;
+	gtags;} # in Fedora koennte gtags fehlen; >$KR Permission denied
+einricht vim vim
+`which vim || which vi` $DTN -pNu .exrc
